@@ -1,8 +1,10 @@
 const fs = require('fs');
 const readline = require('readline');
 
-class NonDeterministicFiniteAutomaton {
-  constructor() {
+class NonDeterministicFiniteAutomaton 
+{
+  constructor() 
+  {
     this.states = new Set();
     this.alphabet = new Set();
     this.transitions = new Map();
@@ -10,7 +12,8 @@ class NonDeterministicFiniteAutomaton {
     this.finalStates = new Set();
   }
 
-  loadFromFile(filePath) {
+  loadFromFile(filePath) 
+  {
     const data = fs.readFileSync(filePath, 'utf8').split('\n').filter(line => line.trim() !== '');
     console.log("\n========================================");
     console.log(filePath + " carregado!");
@@ -27,7 +30,8 @@ class NonDeterministicFiniteAutomaton {
     const finalStateSymbols = data[3].trim().split(' ');
     this.finalStates = new Set(finalStateSymbols);
 
-    for (let i = 4; i < data.length; i++) {
+    for (let i = 4; i < data.length; i++) 
+    {
       const [fromState, toStates, symbol] = data[i].trim().split(' ');
       const transitionKey = `${fromState}-${symbol}`;
       const toStateArray = toStates.split(',');
@@ -38,38 +42,48 @@ class NonDeterministicFiniteAutomaton {
     console.log("\n========================================");
   }
 
-  run(inputWord) {
+  run(inputWord) 
+  {
     const initialStates = new Set([this.initialState]);
     const statesToProcess = new Set([this.initialState]);
 
-    for (const symbol of inputWord) {
+    for (const symbol of inputWord) 
+    {
       const newStates = new Set();
-      for (const state of statesToProcess) {
+      for (const state of statesToProcess) 
+      {
         const transitionKey = `${state}-${symbol}`;
-        if (this.transitions.has(transitionKey)) {
+        if (this.transitions.has(transitionKey)) 
+        {
           const transitionStates = this.transitions.get(transitionKey);
           
-          for (const state of transitionStates) {
+          for (const state of transitionStates) 
+          {
             newStates.add(state);
           }
         }
         
-        if(this.transitions.has(`${state}-&`)){
+        if(this.transitions.has(`${state}-&`))
+        {
           const transitionStates = this.transitions.get(`${state}-&`);
-          for (const state of transitionStates) {
+          for (const state of transitionStates) 
+          {
             newStates.add(state);
           }
         }
       }
       statesToProcess.clear();
 
-      for (const state of newStates) {
+      for (const state of newStates) 
+      {
         statesToProcess.add(state);
       }
     }
 
-    for (const state of statesToProcess) {
-      if (this.finalStates.has(state)) {
+    for (const state of statesToProcess) 
+    {
+      if (this.finalStates.has(state)) 
+      {
         console.log("Estado Final => " + state);
         return 'Aceita';
       }
@@ -79,18 +93,21 @@ class NonDeterministicFiniteAutomaton {
   }
 }
 
-function main() {
+function main() 
+{
   const automaton = new NonDeterministicFiniteAutomaton();
   const filePath = 'automatoAFND.txt';
 
   automaton.loadFromFile(filePath);
 
-  const rl = readline.createInterface({
+  const rl = readline.createInterface
+  ({
     input: process.stdin,
     output: process.stdout
   });
 
-  rl.question('Digite uma palavra: ', (inputWord) => {
+  rl.question('Digite uma palavra: ', (inputWord) => 
+  {
     const result = automaton.run(inputWord);
     console.log(result);
     rl.close();
